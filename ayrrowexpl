@@ -1,0 +1,9 @@
+local GUI = instance.new(game.StarterGui, "ScreenGui")
+GUI.Name = "GUI"
+
+local LocalScript = instance.new(GUI, "LocalScript")
+LocalScript.Name = LocalScript
+
+
+local texto = instance.new(GUI, "Text")
+texto.Text = "Esse é um script"
