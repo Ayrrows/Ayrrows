@@ -1,0 +1,85 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 120)
+frame.Position = UDim2.new(0.5, -150, 0, 50)
+frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+frame.AnchorPoint = Vector2.new(0, 0)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Teleportar para jogador"
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 20
+title.TextColor3 = Color3.new(1,1,1)
+title.Parent = frame
+
+
+local textBox = Instance.new("TextBox")
+textBox.Size = UDim2.new(1, -20, 0, 40)
+textBox.Position = UDim2.new(0, 10, 0, 40)
+textBox.PlaceholderText = "Digite o nome do jogador"
+textBox.ClearTextOnFocus = false
+textBox.Text = ""
+textBox.Font = Enum.Font.SourceSans
+textBox.TextSize = 22
+textBox.TextColor3 = Color3.new(0,0,0)
+textBox.BackgroundColor3 = Color3.fromRGB(230,230,230)
+textBox.Parent = frame
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -20, 0, 30)
+button.Position = UDim2.new(0, 10, 0, 90)
+button.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+button.TextColor3 = Color3.new(1,1,1)
+button.Font = Enum.Font.SourceSansBold
+button.TextSize = 20
+button.Text = "Teletransportar"
+button.Parent = frame
+
+
+local function findPlayerByName(name)
+    name = name:lower()
+    for _, p in pairs(Players:GetPlayers()) do
+        if p.Name:lower() == name then
+            return p
+        end
+    end
+    return nil
+end
+
+local function teleportToPlayer(targetPlayer)
+    if not targetPlayer or not targetPlayer.Character then return end
+    local targetHRP = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local myCharacter = player.Character
+    if not targetHRP or not myCharacter then return end
+    local myHRP = myCharacter:FindFirstChild("HumanoidRootPart")
+    if not myHRP then return end
+
+    local offset = -targetHRP.CFrame.LookVector * 2
+    myHRP.CFrame = targetHRP.CFrame + offset + Vector3.new(0, 3, 0) -- sobe 3 studs pra evitar ficar no chão
+end
+
+button.MouseButton1Click:Connect(function()
+    local targetName = textBox.Text
+    if targetName == "" then
+        warn("Digite um nome válido!")
+        return
+    end
+    local targetPlayer = findPlayerByName(targetName)
+    if not targetPlayer then
+        warn("Jogador não encontrado: "..targetName)
+        return
+    end
+
+    teleportToPlayer(targetPlayer)
+end)
